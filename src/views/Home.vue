@@ -99,7 +99,7 @@ export default {
 
 <style scoped>
   .home_header {
-		 background: url("http://img3.imgtn.bdimg.com/it/u=2071253061,706985742&fm=26&gp=0.jpg")no-repeat ;
+		 background: url("http://img2.imgtn.bdimg.com/it/u=1180451987,1677813495&fm=26&gp=0.jpg")no-repeat ;
 		 /* 自动等比例拉伸图片 */
 		 background-size: cover;
     display: flex;
