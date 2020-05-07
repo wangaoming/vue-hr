@@ -9,8 +9,25 @@
         添加
       </el-button>
     </div>
+    <div class="updo">
+		    <el-upload
+          :show-file-list="false"
+          :before-upload="beforeUpload"
+          :on-success="onSuccess"
+          :on-error="onError"
+          :disabled="importBtnDisabled"
+          style="display: inline-flex; margin-right: 8px"
+          action="/system/basic/pos/import">
+          <el-button :disabled="importBtnDisabled" type="success" :icon="importBtnIcon" size="small">
+            {{importBtnText}}
+          </el-button>
+        </el-upload>
+        <el-button type="success" icon="el-icon-download" size="small" @click="exportData">
+          导出数据
+        </el-button>
+      </div>
+    
     <div>
-		
       <el-table :data="positions" stripe border type="small" style="width: 70%" v-loading="loading" element-loading-text="正在加载..."
 			 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="56"> </el-table-column>
@@ -38,6 +55,7 @@
         批量删除
       </el-button>
     </div>
+
     <el-dialog title="修改职位" :visible.sync="dialogVisible" width="30%">
       <div>
         <el-tag>职位名称</el-tag>
@@ -77,10 +95,40 @@ export default {
         total: 0,
         page: 1,
         size: 5
-      }
+      },
+			importBtnText: '导入数据',
+      importBtnIcon: 'el-icon-upload2',
+      importBtnDisabled: false
     }
   },
   methods: {
+		onSuccess(response, file, fileList) {
+      this.importBtnText = '导入数据'
+      this.importBtnIcon = 'el-icon-upload2'
+      this.importBtnDisabled = false
+      this.initPositions()
+    },
+    onError(err, file, fileList) {
+      this.importBtnText = '导入数据'
+      this.importBtnIcon = 'el-icon-upload2'
+      this.importBtnDisabled = false
+    },
+    beforeUpload () {
+      this.importBtnText = '正在导入'
+      this.importBtnIcon = 'el-icon-loading'
+      this.importBtnDisabled = true
+    },
+    exportData () {
+      window.open('/system/basic/pos/export', '_parent')
+    },
+    handleSizeChange (currestSize) {
+      this.pageInfo.size = currestSize
+      this.initPositions()
+    },
+    handleCurrentChange (currentPage) {
+      this.pageInfo.page = currentPage
+      this.initPositions()
+    },
     // 表格数据初始化处理
     async initPositions () {
 			 this.loading = true
@@ -181,5 +229,16 @@ export default {
     width: 200px;
     margin-left: 8px;
   }
+	.pageable {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+	.updo{
+		height: 60px;
+	  margin-top: -50px;
+		margin-left: 620px;
+		
+	}
 </style>
  
