@@ -1,4 +1,4 @@
- <template>
+<template>
 	<!-- 职位管理 -->
   <div>
     <div>
@@ -11,7 +11,8 @@
     </div>
     <div>
 		
-      <el-table :data="positions" stripe border type="small" style="width: 70%" @selection-change="handleSelectionChange">
+      <el-table :data="positions" stripe border type="small" style="width: 70%" v-loading="loading" element-loading-text="正在加载..."
+			 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="56"> </el-table-column>
         <el-table-column prop="id" label="编号" width="56"> </el-table-column>
         <el-table-column prop="name" label="职位名称" width="180"> </el-table-column>
@@ -23,6 +24,15 @@
           </template>
         </el-table-column>
       </el-table>
+			<!-- 分页条 -->
+			<div class="pageable">
+        <el-pagination background :total="pageInfo.total" :page-sizes="[5, 10, 20, 50, 100]"
+                       :page-size="5"
+                       @current-change="handleCurrentChange"
+                       @size-change="handleSizeChange"
+                       layout="sizes, prev, pager, next, jumper, ->, total, slot">
+        </el-pagination>
+      </div>
       <el-button type="danger" size="small" style="margin-top: 8px" @click="deleteMany"
                  :disabled="multipleSelection.length === 0">
         批量删除
@@ -59,15 +69,27 @@ export default {
       // 对话框显示与否的标志位
       dialogVisible: false,
       // 批量删除的数据记录
-      multipleSelection: []
+      multipleSelection: [],
+			// 加载
+			loading: true,
+			// 分页条
+			pageInfo: {
+        total: 0,
+        page: 1,
+        size: 5
+      }
     }
   },
   methods: {
     // 表格数据初始化处理
     async initPositions () {
-      const data = await this.getRequest('/system/basic/pos/')
+			 this.loading = true
+      const data = await this.getRequest('/system/basic/pos/?page=' + this.pageInfo.page
+        + '&size=' + this.pageInfo.size)
+				 this.loading = false
       if (data) {
-        this.positions = data.obj
+        this.positions = data.obj.list
+				this.pageInfo.total = data.obj.total
       }
     },
     // 添加新记录的事件处理
